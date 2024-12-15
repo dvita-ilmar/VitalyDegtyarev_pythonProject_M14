@@ -30,8 +30,13 @@ for i in range(1, 11):
 # Обновление balance у каждой 2ой записи начиная с 1ой на 500:
 cur.execute("UPDATE Users SET balance = ? WHERE id % 2 != 0", (500,))
 
-# Удаление каждой 3-й записи в таблице начиная с 1ой (придумал только перечислением Id строк):
-cur.execute("DELETE FROM Users WHERE id IN (1, 4, 7, 10)") # Не получилось кортеж в параметры занести
+# Удаление каждой 3-й записи в таблице начиная с 1ой:
+cur.execute("SELECT COUNT(id) FROM Users")
+count_rec = cur.fetchone()[0]
+third_rec = []
+for i in range(1, count_rec+1, 3): third_rec.append(i)
+third_rec = tuple(third_rec)
+cur.execute(f"""DELETE FROM Users WHERE id IN {third_rec}""")
 
 # Вывод записей в консоль кроме пользователя у которого возраст = 60
 cur.execute("SELECT * FROM Users WHERE Age != ?", (60,))
